@@ -1,0 +1,19 @@
+{
+  "name": "observable-model",
+  "version": "1.0.0",
+  "description": "react + rxjs实现状态管理",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "dependencies": {
+    "immer": "^9.0.15",
+    "rxjs": "^6.6.7"
+  }
+}
