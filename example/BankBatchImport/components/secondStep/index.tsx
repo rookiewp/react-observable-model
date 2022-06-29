@@ -14,6 +14,7 @@ import {
   useObModelSubscribe,
   useObModelToState,
   useStateToOb,
+  useSubscriptions,
 } from '@/components/observable-model'
 
 import EditYwlx from './edit-ywlx'
@@ -74,6 +75,8 @@ function SecondStep(props: Props) {
   const [condition, setCondition, condition$] = useStateToOb(defaultCondition)
 
   const visitedRef = useRef(false)
+
+  const rootSubscription = useSubscriptions()
 
   // 修改dataSource
   const changeDataSource = useCallback(
@@ -168,7 +171,7 @@ function SecondStep(props: Props) {
 
   // 获取表格数据
   const requestTableData = useMemo(() => {
-    const request = async (params) => {
+    const getYwlxRuleList = async (params) => {
       setLoading(true)
       model.changeState({ isLoadingTable: true })
       const res = await api.yhdjController
@@ -191,12 +194,14 @@ function SecondStep(props: Props) {
         })
       model.changeState({ dataSource: res })
     }
-    return createObRequest(request)
-  }, [model])
+    const { request, subscription } = createObRequest(getYwlxRuleList)
+    rootSubscription.add(subscription)
+    return request
+  }, [model, rootSubscription])
 
   // 获取一级业务类型列表
   const queryFirstList = useMemo(() => {
-    const request = async (params) => {
+    const getNewFirstKjsxList = async (params) => {
       const res = await api.kjsxModelController.getNewFirstKjsxList({
         request: {
           kDjly: '2',
@@ -210,8 +215,10 @@ function SecondStep(props: Props) {
 
       setFirstList(res)
     }
-    return createObRequest(request)
-  }, [])
+    const { request, subscription } = createObRequest(getNewFirstKjsxList)
+    rootSubscription.add(subscription)
+    return request
+  }, [rootSubscription])
 
   // 过滤表格的fn
   const filterTable = useCallback(

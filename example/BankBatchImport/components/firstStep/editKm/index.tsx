@@ -41,14 +41,17 @@ export default function EditKm(props: Props) {
   const requestKmListWrap = useCallback(
     (szbz) => {
       setLoading(true)
-      requestKmList(szbz, {
-        finally: () => {
-          setLoading(false)
-        },
-        onSuccess: (res) => {
-          setKmList(res || [])
-        },
-      })
+      requestKmList(
+        { szbz, dykm: true },
+        {
+          finally: () => {
+            setLoading(false)
+          },
+          onSuccess: (res) => {
+            setKmList(res || [])
+          },
+        }
+      )
     },
     [requestKmList]
   )

@@ -6,7 +6,7 @@ import { ExclamationCircleFilled } from '@ant-design/icons'
 import FirstStep from './components/firstStep'
 import SecondStep from './components/secondStep'
 import ThreeStep from './components/threeStep'
-import { useObModelToState, createObRequest } from '@/components/observable-model'
+import { useObModelToState, createObRequest, useSubscriptions } from '@/components/observable-model'
 import { event as GlobalEvent } from '@/kit/Global'
 import { getModel, unsubscribeModel } from './model'
 import { history } from 'umi'
@@ -41,6 +41,8 @@ const BankBatchImport2 = (props: IFunctionModalProps) => {
   const dataSource = useObModelToState(model, (state) => state.dataSource)
   const isLoadingTable = useObModelToState(model, (state) => state.isLoadingTable)
   const changeFilterCondition = useObModelToState(model, (state) => state.changeFilterCondition)
+
+  const rootSubscription = useSubscriptions()
 
   useEffect(() => {
     return () => {
@@ -227,7 +229,7 @@ const BankBatchImport2 = (props: IFunctionModalProps) => {
     const {
       detail: { data },
     } = event
-    const request = async () => {
+    const getSupplementarySupplyData = async () => {
       setBtnLoading(true)
       const res = await api.yhdjController
         .getSupplementarySupplyData({
@@ -258,8 +260,10 @@ const BankBatchImport2 = (props: IFunctionModalProps) => {
         handleCancel(true)
       }
     }
-    return createObRequest(request)
-  }, [event, model, handleCancel])
+    const { request, subscription } = createObRequest(getSupplementarySupplyData)
+    rootSubscription.add(subscription)
+    return request
+  }, [event, model, handleCancel, rootSubscription])
 
   // 提交前校验辅助核算数据
   const checkFzhsData = () => {

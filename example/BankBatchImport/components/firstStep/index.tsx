@@ -17,6 +17,7 @@ import {
   useObModelSubscribe,
   useObModelToState,
   useStateToOb,
+  useSubscriptions,
 } from '@/components/observable-model'
 import styles from './index.less'
 
@@ -69,6 +70,8 @@ function FirstStep(props: Props) {
   const visitedRef = useRef(false)
 
   const dataSource = useObModelToState(model, (state) => state.dataSource)
+
+  const rootSubscription = useSubscriptions()
 
   // 过滤条件
   // 通过setCondition来控制FilterArea的状态。condition视为一个‘数据流’，改变时触发过滤，所以需要将状态condition转为Observable
@@ -163,7 +166,7 @@ function FirstStep(props: Props) {
 
   // 获取表格数据
   const requestTableData = useMemo(() => {
-    const request = async (params) => {
+    const wldwGet = async (params) => {
       setLoading(true)
       model.changeState({ isLoadingTable: true })
       const res = await api.yhdjController
@@ -180,8 +183,10 @@ function FirstStep(props: Props) {
       })
       model.changeState({ dataSource: res })
     }
-    return createObRequest(request)
-  }, [model])
+    const { request, subscription } = createObRequest(wldwGet)
+    rootSubscription.add(subscription)
+    return request
+  }, [model, rootSubscription])
 
   // 过滤表格的fn
   const filterTable = useCallback(
@@ -280,7 +285,7 @@ function FirstStep(props: Props) {
     }
   }, [filterTable, condition$, formInstance, model])
 
-  // 订阅params，mount或params改变时请求表格数据
+  // 订阅params，改变时请求表格数据
   useObModelSubscribe(
     model,
     (state) => state.params,
@@ -384,7 +389,7 @@ function FirstStep(props: Props) {
     model.changeState({ changeFilterCondition })
   }, [model, changeFilterCondition])
 
-  // 订阅dataSource，mount或dataSource改变时设置摘要备注列表和对方户名列表
+  // 订阅dataSource，改变时设置摘要备注列表和对方户名列表
   useObModelSubscribe(
     model,
     (state) => state.dataSource,
@@ -431,7 +436,7 @@ function FirstStep(props: Props) {
 
   // 获取科目列表
   const requestKmList = useMemo(() => {
-    const request = async (params) => {
+    const selectAllZtkm = async (params) => {
       const res = await api.fundCommonController.selectAllZtkm({
         param: {
           dykm: params.dykm,
@@ -444,8 +449,10 @@ function FirstStep(props: Props) {
       })
       return res
     }
-    return createObRequest(request)
-  }, [])
+    const { request, subscription } = createObRequest(selectAllZtkm)
+    rootSubscription.add(subscription)
+    return request
+  }, [rootSubscription])
 
   const columns = useMemo(() => {
     return [

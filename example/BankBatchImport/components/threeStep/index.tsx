@@ -12,6 +12,7 @@ import {
   useObModelSubscribe,
   useObModelToState,
   useStateToOb,
+  useSubscriptions,
 } from '@/components/observable-model'
 
 import FzhsSelect from './fzhs-select'
@@ -56,6 +57,8 @@ function ThreeStep(props: Props) {
   const dataSource = useObModelToState(model, (state) => state.dataSource)
 
   const visitedRef = useRef(false)
+
+  const rootSubscription = useSubscriptions()
 
   // 过滤条件
   // 通过setCondition来控制FilterArea的状态。condition视为一个‘数据流’，改变时触发过滤，所以需要将状态condition转为Observable
@@ -103,7 +106,7 @@ function ThreeStep(props: Props) {
 
   // 获取表格数据
   const requestTableData = useMemo(() => {
-    const request = async (params) => {
+    const getSupplementarySupplyData = async (params) => {
       setLoading(true)
       model.changeState({ isLoadingTable: true })
       const res = await api.yhdjController
@@ -128,8 +131,10 @@ function ThreeStep(props: Props) {
       })
       model.changeState({ dataSource: res })
     }
-    return createObRequest(request)
-  }, [model])
+    const { request, subscription } = createObRequest(getSupplementarySupplyData)
+    rootSubscription.add(subscription)
+    return request
+  }, [model, rootSubscription])
 
   // 过滤表格的fn
   const filterTable = useCallback(
@@ -196,7 +201,7 @@ function ThreeStep(props: Props) {
     }
   }, [filterTable, condition$, formInstance, model])
 
-  // 订阅params，mount或params改变时请求表格数据
+  // 订阅params，params改变时请求表格数据
   useObModelSubscribe(
     model,
     (state) => state.params,
@@ -212,7 +217,7 @@ function ThreeStep(props: Props) {
 
   // 查询辅助核算明细项
   const queryFzhsDetail = useMemo(() => {
-    const request = async (fzlxCodes) => {
+    const fzlxMapByZtkmIdOrFzlxCodes = async (fzlxCodes) => {
       setLoading(true)
       const res = await api.fzhsController
         .fzlxMapByZtkmIdOrFzlxCodes({
@@ -234,8 +239,10 @@ function ThreeStep(props: Props) {
         setFzhsType2NameMap(mapName)
       }
     }
-    return createObRequest(request)
-  }, [])
+    const { request, subscription } = createObRequest(fzlxMapByZtkmIdOrFzlxCodes)
+    rootSubscription.add(subscription)
+    return request
+  }, [rootSubscription])
 
   const setFilterOptions = (dataSource) => {
     let not = 0
