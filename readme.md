@@ -1,4 +1,5 @@
-## 1: 为什么尝试 rxjs 代替 redux 和 Context 来实现状态管理：
+## 尝试 rxjs 代替 redux 和 Context 来实现状态管理：
+## 1: why?
 
 ### 1.1 Context 的问题
 
@@ -46,6 +47,4 @@ useEffect(() => {
 
 ### 1.4 rxjs本身对异步的处理很强
 
-### 1.5 综合上面 4 个原因，尝试 rxjs 来代替 redux 和 Context
-
-## 2: 关于example：这是我们项目中的一个页面的代码，主要想展示一下observable-model的用法。页面很简单，就是一个Modal里面包含3个步骤（antd Steps组件），每一步都是不相关的，可以认为Modal是一个父组件，每个Step是个子组件。正常情况我们会通过props或者Context将参数从Modal传到子组件，这边用observable-model代替
+## 2: 关于example：这是我们项目中的一个页面的代码，主要想展示一下observable-model的用法。页面很简单，就是一个Modal里面包含3个步骤（antd Steps组件）可以认为Modal是一个父组件，每个Step是个子组件。正常情况我们会通过props或者Context将参数从Modal传到子组件，这边用observable-model代替
