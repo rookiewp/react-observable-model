@@ -44,6 +44,8 @@ useEffect(() => {
 
 为什么会滥用 useEffect？ 因为在 React 中使用响应式真的很香，拥有像 Vue 一样响应式，同时拥有 React 的 Concurrent Mode（并发模式），鱼和熊掌可兼得？只是使用方式错了！
 
-### 1.4 目前项目中的 PageModal 也只是 redux，只是一种赖注册 reducer 而已，不是在页面的入口一次性注入所有的 reducer，而是在具体页面，根据需要手动注册。并且根据传入的 pageKey 给 action type 加上一些前缀防止冲突。所以 PageModel 还是在使用项目级别的 redux。（一开始以为是组件级别的 redux）
+### 1.4 rxjs本身对异步的处理很强
 
 ### 1.5 综合上面 4 个原因，尝试 rxjs 来代替 redux 和 Context
+
+## 2: 关于example：这是我们项目中的一个页面的代码，主要想展示一下observable-model的用法。页面很简单，就是一个Modal里面包含3个步骤（antd Steps组件），每一步都是不相关的，可以认为Modal是一个父组件，每个Step是个子组件。正常情况我们会通过props或者Context将参数从Modal传到子组件，这边用observable-model代替

@@ -24,7 +24,7 @@ const canGetKey = (model, key) => {
 export const map = new Map()
 
 // 根据model生成 modelCtx
-export function enhanceModel(model: Model, async = true) {
+export function enhanceModel(model: Model) {
   const initState = model.state
   if (initState === undefined || initState === null) {
     throw new Error('model.state must be a object')
@@ -53,23 +53,12 @@ export function enhanceModel(model: Model, async = true) {
 
     // 通过immer的方式改变state, 并调用state$.next()吐出[newState, oldState]，之所以要吐出oldState，为了可以比较新老state已决定是否要触发更新
     changeState(partialState) {
-      // 支持同步和异步模式，默认为异步。async = true时可以现实类似批量更新的效果，仿照Vue2.x queueWatcher
-      if (async) {
-        modelCtx.queue.push(partialState)
-        if (!modelCtx.waiting) {
-          modelCtx.waiting = true
-          Promise.resolve().then(() => {
-            modelCtx.flush()
-          })
-        }
-      } else {
-        const newState = produce(modelCtx._state, (draft) => {
-          Object.assign(draft, partialState)
-        })
-        modelCtx._prevState = modelCtx._state
-        modelCtx._state = newState
-        state$.next([modelCtx._state, modelCtx._prevState])
-      }
+      const newState = produce(modelCtx._state, (draft) => {
+        Object.assign(draft, partialState)
+      })
+      modelCtx._prevState = modelCtx._state
+      modelCtx._state = newState
+      state$.next([modelCtx._state, modelCtx._prevState])
     },
   }
 

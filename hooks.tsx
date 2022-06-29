@@ -10,7 +10,9 @@ const compareDefalut = (a, b) => a === b
 export function useObModelToState(modelPorxy, selector, compare = compareDefalut) {
   const modelCtx = map.get(modelPorxy)
   const { _state } = modelCtx
-  const [v, setV] = useState(selector(_state))
+  const initValue = selector(_state)
+  // initValue可能是个函数
+  const [v, setV] = useState(() => initValue)
   const optionsRef = useRef({
     selector,
     compare,

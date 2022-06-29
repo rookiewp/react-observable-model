@@ -5,10 +5,10 @@ import {
   useStateToOb,
 } from './hooks'
 import { createObRequest, createModel } from './util'
-import { enhanceModel } from './enhanceModel'
+// import { enhanceModel } from './enhanceModel'
 
 export {
-  enhanceModel,
+  // enhanceModel,
   createObRequest,
   useObModelToState,
   useSubscriptionsHooks,

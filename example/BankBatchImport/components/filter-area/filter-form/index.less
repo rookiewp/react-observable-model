@@ -1,0 +1,39 @@
+.filterForm {
+  padding: 24px 24px 8px 0;
+  .formItemRow {
+    display: flex;
+    .label {
+      flex: 0 0 auto;
+      color: #000000;
+      font-size: 13px;
+      line-height: 28px;
+      text-align: right;
+      width: 104px;
+    }
+    .content {
+      display: flex;
+      .formItem {
+        position: relative;
+      }
+      .line {
+        display: inline-block;
+        margin: 0 5px;
+        line-height: 30px;
+        color: #000;
+      }
+    }
+  }
+  :global {
+    .ant-form-item-label {
+      width: 104px;
+    }
+    .ant-input,
+    .ant-select {
+      width: 280px;
+    }
+
+    .ant-form-item {
+      margin-bottom: 12px;
+    }
+  }
+}
